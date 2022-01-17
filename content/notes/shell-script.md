@@ -54,18 +54,3 @@ for FILENAME in prefix_*; do mv $FILENAME "${FILENAME#prefix_}"; done
     shift
   done
   ```
-
-```bash
-${variable#pattern}
-```
-
-which removes the shortest match to the glob pattern from the beginning of variable. In your case, pattern consists of (a) * which matches zero or more of any character, and (b) = which matches just =.
-
-See man bash for more info.
-
-Example
-$ i='ab=cd'
-$ echo "${i#a}"
-b=cd
-$ echo "${i#*=}"
-cd

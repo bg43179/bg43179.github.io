@@ -37,7 +37,7 @@ const Author = ({ author, isIndex }: Props) => (
       </h2>
     )}
     <div className="text-muted d-flex flex-column" style={{ fontSize: '16px' }}>
-      <span>SDE @ Appfolio</span>
+      <span>SDE @ Stripe</span>
       <span>MS CS '19 @ UW-Madison</span>
       <span className="mt-2">Enthusiastic about creating tools to make life better.</span>
     </div>
