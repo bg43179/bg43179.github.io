@@ -31,6 +31,15 @@ note: "Shell Script"
 
 ## Comamnd
 
+###
+```bash
+# add prefix to all file in folders
+for FILENAME in *; do mv $FILENAME prefix_$FILENAME; done
+
+# remvoe prefix from all files in folders
+for FILENAME in prefix_*; do mv $FILENAME "${FILENAME#prefix_}"; done
+```
+
 ### `shift`
   - is a shell builtin that operates on the positional parameters.
   - Each time you invoke shift, it "shifts" all the positional parameters down by one. $2 becomes $1, $3 becomes $2, $4 becomes $3
@@ -46,3 +55,17 @@ note: "Shell Script"
   done
   ```
 
+```bash
+${variable#pattern}
+```
+
+which removes the shortest match to the glob pattern from the beginning of variable. In your case, pattern consists of (a) * which matches zero or more of any character, and (b) = which matches just =.
+
+See man bash for more info.
+
+Example
+$ i='ab=cd'
+$ echo "${i#a}"
+b=cd
+$ echo "${i#*=}"
+cd

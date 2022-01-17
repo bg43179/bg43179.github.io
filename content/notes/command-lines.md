@@ -19,6 +19,10 @@ The data is '04/13/2020'
 Andrew Chen
 ```
 
+
+### tail
+- `-n`: If you put a plus sign before num, tail outputs all lines beginning with that line. For example, `-n +1` prints every line.
+
 ### `grep [OPTION] [COND] FILE`
 
 - `-E` regex matching
