@@ -118,7 +118,7 @@ Change the order and replace count with size to make sure ActiveRecord is loaded
 <li>Don’t call <code class="language-text">scopes</code> on associations when you’re rendering collections</li>
 <li>Don’t put query methods, like <code class="language-text">where</code>, in instance methods of an <code class="language-text">ActiveRecord::Base</code> class.</li>
 <li><code class="language-text">includes</code> + <code class="language-text">scopes</code> (and other preloading + association) is a way to reduce the cost of <code class="language-text">where</code></li>
-<li><code class="language-text">includes</code> use a concept called “Eager loading”, Eager loading works by preloading every comment for every article beforehand in a temporary cache stored in memory</li>
+<li><code class="language-text">includes</code> uses a concept called “Eager loading”. Eager loading works by preloading every comment for every article beforehand in a temporary cache stored in memory.</li>
 <li>
 <p>When an Active Record associated is called, the association method will first try to pull the requested association data out of the <code class="language-text">@association_cache</code> instance variable assuming it has already been loaded into memory.</p>
 <p><a href="https://www.speedshop.co/2019/01/10/three-activerecord-mistakes.html" target="_blank" rel="nofollow noopener noreferrer">Three Active Record Mistake</a></p>

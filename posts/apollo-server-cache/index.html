@@ -88,7 +88,7 @@
 <p><span></span></p>
 <p>這邊提一點，<code class="language-text">InMemoryCache</code> 會透過發送 query 的 <code class="language-text">__typename__</code>，以及 <code class="language-text">id</code> 去生成一組 ID。因此當 Client 端發送上列的 Query 去拿取 ID 為 12 的 Movie 時 ，Cache 會為 Movie 生成一組 <code class="language-text">Movie:12</code>，並在後續的 query 與這組 ID 有關時，透過其去查找Cache 中的資料。若發送的是 mutation，也能夠藉此更新存在 cache 中的資料。</p>
 <p>因此當我們分別發送上列的 query 與 mutation 時，apollo 會先從 server 中取得資料並存入 cache，而在進行 mutation 的時候，發送 request 到 server 端並用 <code class="language-text">Movie:12</code> 去更新存在 Cache 中的資料，節省手動操作的麻煩。</p>
-<p>然而，上述的特性在某些特殊情形下會無法正確的更新的 Cache，這裡不多贅述，有興趣的朋友可以參照 <a href="https://github.com/apollographql/apollo-feature-requests/issues/4" target="_blank" rel="nofollow noopener noreferrer">Umbrella ussue</a>。因為有這些特殊情形，apollo 也提供了 API 去操作 Cache，以下列出兩種我嘗試過的 API 給大家參考</p>
+<p>然而，上述的特性在某些特殊情形下會無法正確的更新的 Cache，這裡不多贅述，有興趣的朋友可以參照 <a href="https://github.com/apollographql/apollo-feature-requests/issues/4" target="_blank" rel="nofollow noopener noreferrer">Umbrella issue</a>。因為有這些特殊情形，apollo 也提供了 API 去操作 Cache，以下列出兩種我嘗試過的 API 給大家參考</p>
 <div class="gatsby-highlight" data-language="javascript"><pre class="language-javascript"><code class="language-javascript"><span class="token comment">// update: modify cache with readQuery and writeQuery</span>
 apollClient<span class="token punctuation">.</span><span class="token function">mutate</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
   mutation<span class="token operator">:</span> <span class="token constant">UPDATE_MOVIES</span><span class="token punctuation">,</span>
@@ -147,7 +147,7 @@ apollClient<span class="token punctuation">.</span><span class="token function">
   <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">/v1/movie/</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>id<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> cacheOptions<span class="token operator">:</span> <span class="token punctuation">{</span> ttl<span class="token operator">:</span> <span class="token number">60</span> <span class="token punctuation">}</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
 <span class="token punctuation">}</span></code></pre></div>
 <p><span></span></p>
-<p>其中最大的關鍵在於 <code class="language-text">cahceOptions</code>， <code class="language-text">cahceOptions</code> 存在的目的是讓 HTTP request 能夠在 header 中加入 <code class="language-text">Cache-Control</code>，進而做到 cache response 的效果。在此可以理解 ApolloServer 端的 cahce 是為 RestDataSource 而設計，使其能夠在給定的 ttl 有效期間內，讓從 server 端提取的資料不需要額外發送一個 request，可以從現存的 response 提取。</p>
+<p>其中最大的關鍵在於 <code class="language-text">cacheOptions</code>， <code class="language-text">cacheOptions</code> 存在的目的是讓 HTTP request 能夠在 header 中加入 <code class="language-text">Cache-Control</code>，進而做到 cache response 的效果。在此可以理解 ApolloServer 端的 cahce 是為 RestDataSource 而設計，使其能夠在給定的 ttl 有效期間內，讓從 server 端提取的資料不需要額外發送一個 request，可以從現存的 response 提取。</p>
 <p>雖然這很方便但也對我們的應用造成了下面這種情形：</p>
 <div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">1. query page (GET v1/movie/:id)
 2. mutation   (PATCH v1/movie/:id)
@@ -156,12 +156,8 @@ apollClient<span class="token punctuation">.</span><span class="token function">
 <p>按照步驟操作後，會發現在第三步重新整理過後，mutation 的結果並沒有成功地顯示在前端，儘管資料可能已經正確的存在DB當中了。</p>
 <p>同樣的為了避免這種情況，可以透過在 Server 去確認 request 並針對想要 invalidate 的 request 去做設計。例如在資料被修改過的情形下，把 GET 回傳的資料從 Cache 中刪除，例如可以透過 Context 以及 Id 去做操作。</p>
 <h2 id="automatic-persisted-queries" style="position:relative;"><a href="#automatic-persisted-queries" aria-label="automatic persisted queries permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Automatic Persisted Queries</h2>
-<p>看完這部分之後，大家可能會發現還有一個類似 Cache 的東西（至少我覺得）叫做 Automatic Persisted Query，簡稱為APQ，APQ的結構如下圖：</p>
-<img src="https://www.apollographql.com/docs/apollo-server/98cb0f1ed777fbd3fb0d0701e41d5dee/persistedQueries.optPath.png" class="mb-4">
-<blockquote>
-<p>Photo Credit: Apollo Docs</p>
-</blockquote>
-<p>APQ 的存在主要是為了處理 GraphQL query 大小太大導致的延遲問題，其會將一個 query 包成 hash 傳送給介於 Apollo Server 及 Client 中間的 cache layer，並透過確認是否有hash key 來決定是否要發送完整的 graphql query 給 server，因此無論如何再 server 端都會執行 query，而其 cache 的並不是回傳的資料本身，而是從 client 端傳到 server端的 query body。</p>
+<p>看完這部分之後，大家可能會發現還有一個類似 Cache 的東西（至少我覺得）叫做 <a href="https://www.apollographql.com/docs/apollo-server/v2/performance/apq/" target="_blank" rel="nofollow noopener noreferrer">Automatic Persisted Query</a>，簡稱為APQ。</p>
+<p>APQ 的存在主要是為了處理 GraphQL query 大小太大導致的延遲問題，其會將一個 query 包成 hash 傳送給介於 Apollo Server 及 Client 中間的 cache layer，並透過確認是否有hash key 來決定是否要發送完整的 graphql query 給 server，因此無論如何再 server 端都會執行 query，而其 cache 的並不是回傳的資料本身，而是從 client 端傳到 server端的 query body。</p>
 <h2 id="summary" style="position:relative;"><a href="#summary" aria-label="summary permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Summary</h2>
 <p>Apollo cahce 的設計博大而精深，也在最新的 ApolloClient 3.0 中引進了不少新的操作，實在無法用一篇文章去解釋全部的操作與細節。總而言之，ApolloClient 的 <code class="language-text">InMemoryCahce</code> 是為前端的 graphql 而設計，ApolloServer 端的是針對發送給不同 Data Service 的 response 做 cache。</p>
 <p>參考資料:</p>
