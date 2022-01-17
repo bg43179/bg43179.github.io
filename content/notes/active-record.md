@@ -72,7 +72,7 @@ note: "Active Record"
 
 - `includes` + `scopes` (and other preloading + association) is a way to reduce the cost of `where`
 
-- `includes` use a concept called "Eager loading", Eager loading works by preloading every comment for every article beforehand in a temporary cache stored in memory
+- `includes` uses a concept called "Eager loading". Eager loading works by preloading every comment for every article beforehand in a temporary cache stored in memory.
 
 - When an Active Record associated is called, the association method will first try to pull the requested association data out of the `@association_cache` instance variable assuming it has already been loaded into memory.
 

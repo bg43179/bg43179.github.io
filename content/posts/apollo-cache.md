@@ -47,7 +47,7 @@ const UPDATE_MOVIE = gql`
 
 因此當我們分別發送上列的 query 與 mutation 時，apollo 會先從 server 中取得資料並存入 cache，而在進行 mutation 的時候，發送 request 到 server 端並用 `Movie:12` 去更新存在 Cache 中的資料，節省手動操作的麻煩。
 
-然而，上述的特性在某些特殊情形下會無法正確的更新的 Cache，這裡不多贅述，有興趣的朋友可以參照 [Umbrella ussue](https://github.com/apollographql/apollo-feature-requests/issues/4)。因為有這些特殊情形，apollo 也提供了 API 去操作 Cache，以下列出兩種我嘗試過的 API 給大家參考
+然而，上述的特性在某些特殊情形下會無法正確的更新的 Cache，這裡不多贅述，有興趣的朋友可以參照 [Umbrella issue](https://github.com/apollographql/apollo-feature-requests/issues/4)。因為有這些特殊情形，apollo 也提供了 API 去操作 Cache，以下列出兩種我嘗試過的 API 給大家參考
 
 ```javascript
 // update: modify cache with readQuery and writeQuery
@@ -121,7 +121,7 @@ class MoviesAPI extends RESTDataSource {
 ```
 <span></span>
 
-其中最大的關鍵在於 `cahceOptions`， `cahceOptions` 存在的目的是讓 HTTP request 能夠在 header 中加入 `Cache-Control`，進而做到 cache response 的效果。在此可以理解 ApolloServer 端的 cahce 是為 RestDataSource 而設計，使其能夠在給定的 ttl 有效期間內，讓從 server 端提取的資料不需要額外發送一個 request，可以從現存的 response 提取。
+其中最大的關鍵在於 `cacheOptions`， `cacheOptions` 存在的目的是讓 HTTP request 能夠在 header 中加入 `Cache-Control`，進而做到 cache response 的效果。在此可以理解 ApolloServer 端的 cahce 是為 RestDataSource 而設計，使其能夠在給定的 ttl 有效期間內，讓從 server 端提取的資料不需要額外發送一個 request，可以從現存的 response 提取。
 
 雖然這很方便但也對我們的應用造成了下面這種情形：
 ```
@@ -137,13 +137,9 @@ class MoviesAPI extends RESTDataSource {
 
 ## Automatic Persisted Queries
 
-看完這部分之後，大家可能會發現還有一個類似 Cache 的東西（至少我覺得）叫做 Automatic Persisted Query，簡稱為APQ，APQ的結構如下圖：
+看完這部分之後，大家可能會發現還有一個類似 Cache 的東西（至少我覺得）叫做 [Automatic Persisted Query](https://www.apollographql.com/docs/apollo-server/v2/performance/apq/)，簡稱為APQ。
 
-<img src="https://www.apollographql.com/docs/apollo-server/98cb0f1ed777fbd3fb0d0701e41d5dee/persistedQueries.optPath.png" class="mb-4">
-
-> Photo Credit: Apollo Docs
-
-APQ 的存在主要是為了處理 GraphQL query 大小太大導致的延遲問題，其會將一個 query 包成 hash 傳送給介於 Apollo Server 及 Client 中間的 cache layer，並透過確認是否有hash key 來決定是否要發送完整的 graphql query 給 server，因此無論如何再 server 端都會執行 query，而其 cache 的並不是回傳的資料本身，而是從 client 端傳到 server端的 query body。
+APQ 的存在主要是為了處理 GraphQL query 大小太大導致的延遲問題，其會將一個 query 包成 hash 傳送給介於 Apollo Server 及 Client 中間的 cache layer，並透過確認是否有hash key 來決定是否要發送完整的 graphql query 給 server，因此無論如何再 server 端都會執行 query，而其 cache 的並不是回傳的資料本身，而是從 client 端傳到 server端的 query body。
 
 ## Summary
 
