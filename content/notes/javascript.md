@@ -3,8 +3,8 @@ title: Javascript
 date: "2020-12-17"
 template: "note"
 draft: false
-slug: "javasript"
-note: "Javasript"
+slug: "javascript"
+note: "Javascript"
 ---
 
 ## var, let, const
