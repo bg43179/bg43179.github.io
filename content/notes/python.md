@@ -179,8 +179,35 @@ dic = collections.defaultdict(int)
 dic = collections.defaultdict(list)
 ```
 
-```
-collections.counter
+```python
+from collections import counter
+
+counter = collections.Counter()
+
+
+c | d # union:  max(c[x], d[x])
+c + d # add two counters together:  c[x] + d[x]
+c - d # subtract (keeping only positive counts)
+c & d # intersection:  min(c[x], d[x])
+
+if not (c - d):
+  print('c is subset of d')
+else:
+  print('c is not subset of d')
+
+counter = Counter({'a': 3, 'b': 3, 'c': 0})
+# miscellaneous examples
+print(sum(counter.values()))  # 6
+
+print(list(counter))  # ['a', 'b', 'c']
+print(set(counter))  # {'a', 'b', 'c'}
+print(dict(counter))  # {'a': 3, 'b': 3, 'c': 0}
+print(counter.items())  # dict_items([('a', 3), ('b', 3), ('c', 0)])
+
+# elements()
+elements = counter.elements()  # doesn't return elements with count 0 or less
+for value in elements:
+    print(value)
 ```
 
 ## Heapq

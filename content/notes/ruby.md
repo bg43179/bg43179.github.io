@@ -14,7 +14,49 @@ note: "Ruby"
   `h1.merge(h2)` -> Create new object in the heap<br/>
   `h1.merge!(h2)` -> Update h1
 
-- `module` represents the file-hierarchy `ContactInfo::Email`, can fine `email.rb` in `contact_info` directory
+- `module` represents the file-hierarchy `ContactInfo::Email`, can find `email.rb` in `contact_info` directory
+
+## String
+```ruby
+str = '123456'
+str.count
+
+# Returns a new String with the given record separator removed from the end of str (if present).
+# If $/ has not been changed from the default Ruby record separator, then chomp also removes carriage return characters (that is it will remove n, r, and rn).
+
+"hello".chomp                #=> "hello"
+"hello\n".chomp              #=> "hello"
+"hello\r\n".chomp            #=> "hello"
+"hello\r".chomp              #=> "hello"
+"hello \n there".chomp       #=> "hello \n there"
+"hello".chomp("llo")         #=> "he"
+"hello\r\n\r\n".chomp('')    #=> "hello"
+```
+
+## Array
+```ruby
+# init 3 * 4 with default value 0
+arr = Array.new(3) { Array.new(4) {0} }
+
+# slicing
+nums = [1,2,3,4,5,6]
+
+nums[0..2] # [1,2,3]
+nums[0...2] # [1,2]
+nums[-2..-1] # [5,6]
+nums[-2...-1] # [5]
+
+# find occurance of elements
+nums.count(1) # 1
+# find max among array
+nums.max # 6
+```
+
+## Hash
+```ruby
+# equalivent to python defaultdict
+dic = Hash.new { |h, k| h[k] = 0 }
+```
 
 ## Proc
 ## Block
@@ -103,6 +145,25 @@ end
 ```
 
 Reference: [Ruby: Tap that method](https://medium.com/aviabird/ruby-tap-that-method-90c8a801fd6a), [API Doc](https://apidock.com/ruby/Object/tap)
+
+## File
+
+```ruby
+# read file line by lin
+file = File.open(filename)
+file.readlines.map(&:chomp).each do |line|
+  # do something with line
+end
+file.close
+
+# write something to the file
+file = File.open(filename, 'w')
+file.write('TEST')
+file.close
+
+File.open(filename, 'w') { |f| f.write "Test\n" }
+```
+
 ## Class
 
 ### method
@@ -163,7 +224,7 @@ def Foo.bar
   puts 'class method'
 end
 ```
-Example: 
+Example:
 ```ruby
 module ActiveRecord
   class Base
@@ -187,7 +248,7 @@ MyClass.class_eval do
   end
 end
 
-# is the same as 
+# is the same as
 
 class MyClass
   def num

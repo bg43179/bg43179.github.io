@@ -160,6 +160,24 @@ O(N) = O(N-1) + 最後一步
 
 序列性 前 i 個 最小 可行性
 
+```python
+n = len(piles)
+dp = [[0] * n for _ in range(n)]
+
+# pick i to i
+for i in range(n):
+    dp[i][i] = piles[i]
+
+for l in range(2, n+1):
+    # l can be 2...n
+    # start + l <= n
+    # start = 0, l = n, end = start + l - 1 (n-1)
+    for start in range(n-l+1):
+        end = start + l - 1
+        dp[start][end] = max(piles[start] - dp[start+1][end], piles[end] - dp[start][end-1])
+
+return dp[0][n-1] >= 0
+```
 
 ### LRU Cache
 ```python
@@ -253,6 +271,7 @@ def atMost(s, k):
 
   # index left and right are both in the window
   # element in window s[left:right+1]
+  # right == 0, means 1 element in the window
   for right in range(len(s)):
       while len(window) == k and s[right] not in window and left <= right:
           window[s[left]] -= 1
@@ -298,4 +317,63 @@ def atMost(s, k):
 我們稱過去一段的累積總和為 Prefix Sum</br>
 ```
 Sum of subarray(i, j) = PrefixSum[j] - PrefixSum[i]
+```
+
+
+```python
+def rabinKarp(L):
+    if L == 0:
+        return ""
+
+    memo = collections.defaultdict(list)
+    d, prime = 256, 2**31 - 1
+    remove = 1
+    window = 0
+
+
+    # => d ** L-1 + d ** L-2 + .... d** 0
+    # => length is L
+    for right in range(L-1):
+        remove = (remove * d) % prime
+        window = (window * d + ord(s[right])) % prime
+
+    left = 0
+    # start with L-1 means L element in the window
+    for right in range(L-1, n):
+        if right == L-1:
+            window = (window * d + ord(s[right])) % prime
+        else:
+            window = (d * (window - ord(s[left]) * remove) + ord(s[right])) % prime
+            left += 1
+
+        for j in memo[window]: # window is the rolling_hash
+            # left and right are in window
+            if s[left:right+1] == s[j-L+1:j+1]:
+                return s[left:right+1]
+
+        memo[window].append(right)
+
+    return ""
+```
+
+```python
+def rolling_hash(size):
+  count = 0
+  memo = collections.defaultdict(set)
+  d, prime = 256, 2**31 - 1
+  remove = d ** (size - 1)
+  left, window = 0, 0
+
+  for right in range(len(s)):
+      if right - left + 1 > size:
+          window -= ord(s[left]) * remove
+          left += 1
+
+      window = (window * d + ord(s[right])) % prime
+
+      if right - left + 1 == size:
+          if s[left:right+1] not in memo[window]:
+              count += 1
+              memo[window].add(s[left:right+1])
+  return count
 ```
