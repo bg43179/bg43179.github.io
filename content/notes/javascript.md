@@ -61,8 +61,8 @@ When JS is not executed in strict mode, it binds the function to the Object maki
 
 ## Events:
 
-- capturing (trickling): from top(outermost) to button(innermost)
-- bubbling: from button(innermost) to top(outermost)
+- capturing (trickling): from top(outermost) to bottom (innermost)
+- bubbling: from bottom (innermost) to top(outermost)
 
 ```javascript
 addEventListner(type, listener, useCapture)
@@ -92,7 +92,7 @@ inner.addEventListener('click',
   () => console.log('trigger inner button'), true);
 ```
 
-Since the `useCapture` is `true`, it will trigger events from outermost to innermost on click the anchor tag.
+Since the `useCapture` is `true`, it will trigger events from outermost to innermost on clicking the anchor tag.
 
 ```javascript
 // output
@@ -103,7 +103,7 @@ trigger middle div
 ### e.preventDefault
 > Why was innermost not trigged here?
 
-Becasue empty anchor tag will redirect to the current page by default,so it stopped the event chain. We can use `e.stopPreventDefault` here to get rid of the default behavior.
+The event chain is interrupted because an empty anchor tag would trigger redirection to the current page by default. `e.stopPreventDefault` can be used here to bypass the default behavior.
 
 ```javascript
 inner.addEventListener('click',
@@ -121,7 +121,7 @@ trigger middle button
 ### e.stopPropgagtion:
 > What if we want to click outer div but prevent midde div, inner button be triggered?
 
-By using `stopPropgagtion`, we can stop the event chain.
+By using `e.stopPropgagtion`, we can stop the event chain.
 ```javascript
 outer.addEventListener('click',
   (e) => {
@@ -140,8 +140,8 @@ trigger outer div
 - Tracking (from whom the event came)
 - Filtering
 
-Utilizing bubbling to delegate event. `target` is used here to identify where the event was triggered.
-The benefit is we only have one event listener to track and it can potentailly increase the performance.
+Utilizing bubbling to delegate events, ` target` is used to identify where the event was triggered.
+The benefit is that we only have one event listener to track, which can potentially increase the performance.
 
 Note: `currentTarget` is where you bind the event listener
 
