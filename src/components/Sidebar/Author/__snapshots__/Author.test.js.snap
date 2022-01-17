@@ -39,7 +39,7 @@ exports[`Author renders correctly 1`] = `
     }
   >
     <span>
-      SDE @ Appfolio
+      SDE @ Stripe
     </span>
     <span>
       MS CS '19 @ UW-Madison
