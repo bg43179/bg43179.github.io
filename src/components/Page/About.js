@@ -40,9 +40,13 @@ const About = () => { //eslint-disable-line arrow-body-style, spaced-comment
           <span className="mx-3">Work</span>
         </Card.Header>
         <Card.Body>
+        <Card.Text className="d-flex">
+            <span className="ml-3">Software Engineer, Stripe</span>
+            <span className="ml-auto">Aug, 2021 - Now</span>
+          </Card.Text>
           <Card.Text className="d-flex">
             <span className="ml-3">Software Engineer, Appfolio</span>
-            <span className="ml-auto">July, 2019 - Now</span>
+            <span className="ml-auto">July, 2019 - Aug, 2021</span>
           </Card.Text>
           <Card.Text className="d-flex">
             <span className="ml-3">Teaching Assistent (CS300), UW-Madison</span>
